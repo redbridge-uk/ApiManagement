@@ -4,6 +4,40 @@ using Redbridge.Diagnostics;
 
 namespace Redbridge.ApiManagement
 {
+    public abstract class ApiMethod<TIn1, TIn2, TIn3, TIn4, TReturn, TContext> : ApiCall
+    {
+        private readonly IApiContextProvider<TContext> _contextProvider;
+        readonly IApiContextAuthorizer<TContext> _authority;
+
+        protected ApiMethod(ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority)
+            : base(logger)
+        {
+            _contextProvider = contextProvider ?? throw new ArgumentNullException(nameof(contextProvider));
+            _authority = authority ?? throw new ArgumentNullException(nameof(authority));
+        }
+
+        public async Task<TReturn> InvokeAsync(TIn1 in1, TIn2 in2, TIn3 in3, TIn4 in4)
+        {
+            OnBeforeInvoke(in1, in2, in3, in4);
+
+            var context = await _contextProvider.GetCurrentAsync();
+
+            await _authority.AuthorizeAsync(this, context);
+
+            var result = await OnInvoke(in1, in2, in3, in4, context);
+
+            OnAfterInvoke(in1, in2, in3, in4, result);
+
+            return result;
+        }
+
+        protected abstract Task<TReturn> OnInvoke(TIn1 in1, TIn2 in2, TIn3 in3, TIn4 in4, TContext context);
+
+        protected virtual void OnBeforeInvoke(TIn1 in1, TIn2 in2, TIn3 in3, TIn4 in4) {}
+
+        protected virtual void OnAfterInvoke(TIn1 in1, TIn2 in2, TIn3 in3, TIn4 in4, TReturn result) {}
+    }
+
 	public abstract class ApiMethod<TIn1, TIn2, TIn3, TReturn, TContext> : ApiCall
 	{
 		private readonly IApiContextProvider<TContext> _contextProvider;
@@ -46,11 +80,8 @@ namespace Redbridge.ApiManagement
 
 		protected ApiMethod(ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority) : base(logger)
 		{
-			
-			if (authority == null) throw new ArgumentNullException(nameof(authority));
-			if (contextProvider == null) throw new ArgumentNullException(nameof(contextProvider));
-			_contextProvider = contextProvider;
-            _authority = authority;
+            _contextProvider = contextProvider ?? throw new ArgumentNullException(nameof(contextProvider));
+            _authority = authority ?? throw new ArgumentNullException(nameof(authority));
 		}
 
 		public async Task<TReturn> InvokeAsync(TIn1 in1, TIn2 in2)
@@ -85,11 +116,8 @@ namespace Redbridge.ApiManagement
 		protected ApiMethod(ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority)
 		: base(logger)
 		{
-
-			if (authority == null) throw new ArgumentNullException(nameof(authority));
-			if (contextProvider == null) throw new ArgumentNullException(nameof(contextProvider));
-			_contextProvider = contextProvider;
-			_authority = authority;
+            _contextProvider = contextProvider ?? throw new ArgumentNullException(nameof(contextProvider));
+			_authority = authority ?? throw new ArgumentNullException(nameof(authority));
 		}
 
 		public async Task<TReturn> InvokeAsync(TIn1 in1)
@@ -126,10 +154,8 @@ namespace Redbridge.ApiManagement
 
 		protected ApiMethod(ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority) : base(logger)
 		{
-			if (authority == null) throw new ArgumentNullException(nameof(authority));
-			if (contextProvider == null) throw new ArgumentNullException(nameof(contextProvider));
-			_contextProvider = contextProvider;
-			_authority = authority;
+            _contextProvider = contextProvider ?? throw new ArgumentNullException(nameof(contextProvider));
+			_authority = authority ?? throw new ArgumentNullException(nameof(authority));
 		}
 
 		public async Task<TReturn> InvokeAsync()

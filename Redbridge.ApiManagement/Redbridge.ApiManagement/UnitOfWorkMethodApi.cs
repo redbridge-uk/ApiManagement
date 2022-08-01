@@ -167,4 +167,30 @@ namespace Redbridge.ApiManagement
 
         protected abstract Task<TResponse> OnInvoke(TUnitOfWork unit, TIn1 in1, TIn2 in2, TIn3 in3, TContext context);
     }
+
+    public abstract class UnitOfWorkMethodApi<TIn1, TIn2, TIn3, TIn4, TResponse, TUnitOfWork, TContext> : ApiMethod<TIn1, TIn2, TIn3, TIn4, TResponse, TContext>
+        where TUnitOfWork : IWorkUnit
+    {
+        private readonly IUnitOfWorkFactory<TUnitOfWork> _unitOfWorkFactory;
+
+        protected UnitOfWorkMethodApi(IUnitOfWorkFactory<TUnitOfWork> unitOfWorkFactory, ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority)
+            : base(logger, contextProvider, authority)
+        {
+            _unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
+        }
+
+        protected IUnitOfWorkFactory<TUnitOfWork> Factory => _unitOfWorkFactory;
+
+        protected override async Task<TResponse> OnInvoke(TIn1 in1, TIn2 in2, TIn3 in3, TIn4 in4, TContext context)
+        {
+            using (var unit = _unitOfWorkFactory.Create())
+            {
+                var result = await OnInvoke(unit, in1, in2, in3, in4, context);
+                await unit.SaveChangesAsync();
+                return result;
+            }
+        }
+
+        protected abstract Task<TResponse> OnInvoke(TUnitOfWork unit, TIn1 in1, TIn2 in2, TIn3 in3, TIn4 in4, TContext context);
+    }
 }
