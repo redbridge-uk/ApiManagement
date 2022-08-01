@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	  <PackageIconUrl>https://raw.githubusercontent.com/redbridge-uk/resources/master/redbridge_32.png</PackageIconUrl>
+	  <Copyright>Redbridge Solutions Ltd</Copyright>
+	  <PackageTags>Redbridge Api C# Library netstandard2.0</PackageTags>
+	  <PackageDescription>Api management redbridge library</PackageDescription>
+	  <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Redbridge.SDK" Version="2.2.1" />
+  </ItemGroup>
+
+</Project>

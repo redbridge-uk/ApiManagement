@@ -7,3 +7,8 @@
 /Redbridge.ApiManagement/Redbridge.ApiManagement/obj
 /Redbridge.ApiManagement/Redbridge.ApiManagement.Tests/obj
 /Redbridge.ApiManagement/Redbridge.ApiManagement.Tests/bin/Debug/netcoreapp3.1
+/.vs
+/Redbridge.ApiManagement/bin/Debug/netstandard2.0
+/Redbridge.ApiManagement/obj
+/Redbridge.ApiManagement.Tests/bin/Debug/netcoreapp3.1
+/Redbridge.ApiManagement.Tests/obj
