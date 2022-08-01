@@ -37,3 +37,7 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Coverage
+      run: dotnet-coverage collect dotnet test --no-build -f xml  -o 'coverage.xml'
+    - name: End Sonar scan
+      run: dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
