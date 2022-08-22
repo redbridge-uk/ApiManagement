@@ -7,6 +7,7 @@ namespace Redbridge.ApiManagement
 {
     public abstract class UnitOfWorkMethodApi<TResponse, TUnitOfWork, TContext> : ApiMethod<TResponse, TContext>
     where TUnitOfWork : IWorkUnit
+    where TContext: IApiCallContext
     {
         private readonly IUnitOfWorkFactory<TUnitOfWork> _unitOfWorkFactory;
 
@@ -52,6 +53,7 @@ namespace Redbridge.ApiManagement
 
     public abstract class UnitOfWorkMethodApi<TIn1, TResponse, TUnitOfWork, TContext> : ApiMethod<TIn1, TResponse, TContext>
     where TUnitOfWork : IWorkUnit
+    where TContext: IApiCallContext
     {
         private readonly IUnitOfWorkFactory<TUnitOfWork> _unitOfWorkFactory;
 
@@ -99,6 +101,7 @@ namespace Redbridge.ApiManagement
 
     public abstract class UnitOfWorkMethodApi<TIn1, TIn2, TResponse, TUnitOfWork, TContext> : ApiMethod<TIn1, TIn2, TResponse, TContext>
     where TUnitOfWork : IWorkUnit
+    where TContext: IApiCallContext
     {
         private readonly IUnitOfWorkFactory<TUnitOfWork> _unitOfWorkFactory;
 
@@ -144,6 +147,7 @@ namespace Redbridge.ApiManagement
 
     public abstract class UnitOfWorkMethodApi<TIn1, TIn2, TIn3, TResponse, TUnitOfWork, TContext> : ApiMethod<TIn1, TIn2, TIn3, TResponse, TContext>
     where TUnitOfWork : IWorkUnit
+    where TContext: IApiCallContext
     {
         private readonly IUnitOfWorkFactory<TUnitOfWork> _unitOfWorkFactory;
 
@@ -170,6 +174,7 @@ namespace Redbridge.ApiManagement
 
     public abstract class UnitOfWorkMethodApi<TIn1, TIn2, TIn3, TIn4, TResponse, TUnitOfWork, TContext> : ApiMethod<TIn1, TIn2, TIn3, TIn4, TResponse, TContext>
         where TUnitOfWork : IWorkUnit
+        where TContext: IApiCallContext
     {
         private readonly IUnitOfWorkFactory<TUnitOfWork> _unitOfWorkFactory;
 
