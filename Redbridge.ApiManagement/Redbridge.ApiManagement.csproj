@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Redbridge.SDK" Version="6.0.1" />
+    <PackageReference Include="Redbridge.SDK" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

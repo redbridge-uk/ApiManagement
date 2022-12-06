@@ -1,6 +1,6 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
-using Redbridge.Diagnostics;
 
 namespace Redbridge.ApiManagement.Tests
 {

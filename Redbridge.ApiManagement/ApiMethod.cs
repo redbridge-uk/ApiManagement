@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Redbridge.Diagnostics;
 
 namespace Redbridge.ApiManagement
@@ -129,7 +130,7 @@ namespace Redbridge.ApiManagement
 
 			OnBeforeInvoke(in1);
 
-			Logger.WriteDebug($"Invoking API {ApiName} with input {in1}");
+			Logger.LogDebug($"Invoking API {0} with input {in1}", ApiName);
 
 			var result = await OnInvoke(in1, context);
 

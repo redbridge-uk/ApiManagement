@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Redbridge.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace Redbridge.ApiManagement
 {
