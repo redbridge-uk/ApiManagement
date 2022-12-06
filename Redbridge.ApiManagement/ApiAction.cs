@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Redbridge.Diagnostics;
 
 namespace Redbridge.ApiManagement

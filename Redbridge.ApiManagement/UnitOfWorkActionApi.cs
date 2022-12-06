@@ -1,32 +1,28 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Redbridge.DependencyInjection;
-using Redbridge.Diagnostics;
 
 namespace Redbridge.ApiManagement
 {
 	public abstract class UnitOfWorkActionApi<TUnitOfWork, TContext> : ApiAction<TContext>
-		where TUnitOfWork : IWorkUnit
+		where TUnitOfWork : class, IWorkUnit
         where TContext: IApiCallContext
 	{
-		private readonly IUnitOfWorkFactory<TUnitOfWork> _unitOfWorkFactory;
+		private readonly TUnitOfWork _unit;
 
-		protected UnitOfWorkActionApi(IUnitOfWorkFactory<TUnitOfWork> unitOfWorkFactory, ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority)
+		protected UnitOfWorkActionApi(TUnitOfWork unit, ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority)
 			: base(logger, contextProvider, authority)
 		{
-            _unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
+            _unit = unit ?? throw new ArgumentNullException(nameof(unit));
 		}
-
-        protected IUnitOfWorkFactory<TUnitOfWork> Factory => _unitOfWorkFactory;
 
 		protected override async Task OnInvoke(TContext context)
 		{
-			using (var unit = _unitOfWorkFactory.Create())
-			{
-				await OnInvoke(unit, context);
+				await OnInvoke(_unit, context);
 				try
 				{
-					await unit.SaveChangesAsync();
+					await _unit.SaveChangesAsync();
 					await OnCommitCompleted(context);
 				}
 				catch (Exception e)
@@ -34,7 +30,6 @@ namespace Redbridge.ApiManagement
 					await OnCommitFailed(e, context);
 					throw;
 				}
-			}
 		}
 
 		protected virtual Task OnCommitCompleted(TContext context)
@@ -51,34 +46,29 @@ namespace Redbridge.ApiManagement
 	}
 
 	public abstract class UnitOfWorkActionApi<TIn1, TUnitOfWork, TContext> : ApiAction<TIn1, TContext>
-	where TUnitOfWork : IWorkUnit
+	where TUnitOfWork : class, IWorkUnit
     where TContext: IApiCallContext
 	{
-		private readonly IUnitOfWorkFactory<TUnitOfWork> _unitOfWorkFactory;
+		private readonly TUnitOfWork _unit;
 
-		protected UnitOfWorkActionApi(IUnitOfWorkFactory<TUnitOfWork> unitOfWorkFactory, ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority)
+		protected UnitOfWorkActionApi(TUnitOfWork unit, ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority)
 			: base(logger, contextProvider, authority)
 		{
-			_unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
+            _unit = unit ?? throw new ArgumentNullException(nameof(unit));
 		}
-
-        protected IUnitOfWorkFactory<TUnitOfWork> Factory => _unitOfWorkFactory;
 
 		protected override async Task OnInvoke(TIn1 in1, TContext context)
 		{
-			using (var unit = _unitOfWorkFactory.Create())
+			await OnInvoke(_unit, in1, context);
+			try
 			{
-				await OnInvoke(unit, in1, context);
-				try
-				{
-					await unit.SaveChangesAsync();
-					await OnCommitCompleted(unit, in1, context);
-				}
-				catch (Exception e)
-				{
-					await OnCommitFailed(unit, e, in1, context);
-					throw;
-				}
+				await _unit.SaveChangesAsync();
+				await OnCommitCompleted(_unit, in1, context);
+			}
+			catch (Exception e)
+			{
+				await OnCommitFailed(_unit, e, in1, context);
+				throw;
 			}
 		}
 
@@ -96,35 +86,30 @@ namespace Redbridge.ApiManagement
 	}
 
     public abstract class UnitOfWorkActionApi<TIn1, TIn2, TUnitOfWork, TContext> : ApiAction<TIn1, TIn2, TContext>
-        where TUnitOfWork : IWorkUnit
+        where TUnitOfWork : class, IWorkUnit
         where TContext: IApiCallContext
     {
-        private readonly IUnitOfWorkFactory<TUnitOfWork> _unitOfWorkFactory;
+        private readonly TUnitOfWork _unit;
 
-        protected UnitOfWorkActionApi(IUnitOfWorkFactory<TUnitOfWork> unitOfWorkFactory, ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority)
+        protected UnitOfWorkActionApi(TUnitOfWork unit, ILogger logger, IApiContextProvider<TContext> contextProvider, IApiContextAuthorizer<TContext> authority)
             : base(logger, contextProvider, authority)
         {
-            _unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
+            _unit = unit ?? throw new ArgumentNullException(nameof(unit));
         }
-
-        protected IUnitOfWorkFactory<TUnitOfWork> Factory => _unitOfWorkFactory;
 
         protected override async Task OnInvoke(TIn1 in1, TIn2 in2, TContext context)
         {
-            using (var unit = _unitOfWorkFactory.Create())
-            {
-                await OnInvoke(unit, in1, in2, context);
+                await OnInvoke(_unit, in1, in2, context);
                 try
                 {
-                    await unit.SaveChangesAsync();
-                    await OnCommitCompleted(unit, in1, in2, context);
+                    await _unit.SaveChangesAsync();
+                    await OnCommitCompleted(_unit, in1, in2, context);
                 }
                 catch (Exception e)
                 {
-                    await OnCommitFailed(unit, e, in1, in2, context);
+                    await OnCommitFailed(_unit, e, in1, in2, context);
                     throw;
                 }
-            }
         }
 
         protected virtual Task OnCommitCompleted(TUnitOfWork workUnit, TIn1 in1, TIn2 in2, TContext context)
